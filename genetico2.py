@@ -144,24 +144,24 @@ def mutacao(bitstring, tx_mut):
 
 # Algoritmo genético
 def alg_genetico(funcao, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n_filhos, roleta, verbose, plotar):
-    # População inicial de bitstrings aleatórias
-    pop = [randint(0, 2, n_bits*len(limites)).tolist() for _ in range(tam_pop)]
-    # Decodifica todos os itens
-    decodificado = [decodifica(limites, n_bits, p) for p in pop]
-    # Avalia todos os candidatos da população
-    scores = [funcao(d) for d in decodificado]
-    # Checa pela melhor heurística atual
-    i_melhor = pega_menor(scores)
-    melhor_eval = scores[i_melhor]
-    if verbose: print(f"> Melhor inicial: {decodificado[i_melhor]} = {melhor_eval}")
-    bests = []
-    if plotar:
-        print("Geração 1")
-        plot(decodificado)
-        plot_landscape(decodificado)
+	# População inicial de bitstrings aleatórias
+	pop = [randint(0, 2, n_bits*len(limites)).tolist() for _ in range(tam_pop)]
+	# Decodifica todos os itens
+	decodificado = [decodifica(limites, n_bits, p) for p in pop]
+	# Avalia todos os candidatos da população
+	scores = [funcao(d) for d in decodificado]
+	# Checa pela melhor heurística atual
+	i_melhor = pega_menor(scores)
+	melhor_eval = scores[i_melhor]
+	if verbose: print(f"> Melhor inicial: {decodificado[i_melhor]} = {melhor_eval}")
+	bests = []
+	if plotar:
+		print("Geração 1")
+		plot(decodificado)
+		plot_landscape(decodificado)
 
-    # Iterando pelas gerações
-    for gen in range(geracoes):
+	# Iterando pelas gerações
+	for gen in range(geracoes):
         for i in range(n_filhos):
             # Seleciona 2 pais com o método escolhido
             if roleta == 1: pai1, pai2 = roleta_dupla(pop, scores)
@@ -178,31 +178,31 @@ def alg_genetico(funcao, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n
             pop[pega_maior(scores)] = filho
             scores[pega_maior(scores)] = funcao(decodifica(limites, n_bits, filho))
 
-        # Decodifica todos os itens
-        decodificado = [decodifica(limites, n_bits, p) for p in pop]
-        # Avalia todos os candidatos da população
-        scores = [funcao(d) for d in decodificado]
-        # Checa por uma nova melhor solução
-        i_possivel_melhor = pega_menor(scores)
-        possivel_melhor_eval = scores[i_melhor]
-        # Se o melhor indivíduo daquela geração for melhor que o melhor histórico, substituímos o melhor histórico por ele
-        if possivel_melhor_eval < melhor_eval:
-            i_melhor = i_possivel_melhor
-            melhor_eval = possivel_melhor_eval
-            if verbose: print(f"> Geração {gen+1}: Novo melhor {decodificado[i_melhor]} = {melhor_eval}")
+		# Decodifica todos os itens
+		decodificado = [decodifica(limites, n_bits, p) for p in pop]
+		# Avalia todos os candidatos da população
+		scores = [funcao(d) for d in decodificado]
+		# Checa por uma nova melhor solução
+		i_possivel_melhor = pega_menor(scores)
+		possivel_melhor_eval = scores[i_melhor]
+		# Se o melhor indivíduo daquela geração for melhor que o melhor histórico, substituímos o melhor histórico por ele
+		if possivel_melhor_eval < melhor_eval:
+			i_melhor = i_possivel_melhor
+			melhor_eval = possivel_melhor_eval
+			if verbose: print(f"> Geração {gen+1}: Novo melhor {decodificado[i_melhor]} = {melhor_eval}")
 
-        # Plota nas gerações 1, 25, 50 e 100
-        if plotar and (gen == 24 or gen == 49 or gen == 99):
-            print(f"Geração {gen+1}")
-            plot(decodificado)
-            plot_landscape(decodificado)
+		# Plota nas gerações 1, 25, 50 e 100
+		if plotar and (gen == 24 or gen == 49 or gen == 99):
+			print(f"Geração {gen+1}")
+			plot(decodificado)
+			plot_landscape(decodificado)
 
-        scores_em_ordem = scores.copy()
-        scores_em_ordem = sorted(scores_em_ordem)
-        # Colocando a média dos 30 melhores na lista de bests
-        bests.append(sum(scores_em_ordem[:30])/30)
+		scores_em_ordem = scores.copy()
+		scores_em_ordem = sorted(scores_em_ordem)
+		# Colocando a média dos 30 melhores na lista de bests
+		bests.append(sum(scores_em_ordem[:30])/30)
 
-    return pop[i_melhor], melhor_eval, bests
+	return pop[i_melhor], melhor_eval, bests
 
 # Range para input
 limites = [[-2.048, 2.048], [-2.048, 2.048]]
