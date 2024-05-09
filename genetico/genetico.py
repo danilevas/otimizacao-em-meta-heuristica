@@ -154,7 +154,7 @@ def alg_genetico(funcao, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n
     i_melhor = pega_menor(scores)
     melhor_eval = scores[i_melhor]
     if verbose: print(f"> Melhor inicial: {decodificado[i_melhor]} = {melhor_eval}")
-    bests = []
+    melhores = []
     if plotar:
         print("Geração 1")
         plot(decodificado)
@@ -182,13 +182,17 @@ def alg_genetico(funcao, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n
         decodificado = [decodifica(limites, n_bits, p) for p in pop]
         # Avalia todos os candidatos da população
         scores = [funcao(d) for d in decodificado]
-        # Checa por uma nova melhor solução
-        i_possivel_melhor = pega_menor(scores)
-        possivel_melhor_eval = scores[i_melhor]
+        # Pega o melhor indivíduo da geração
+        i_melhor_gen = pega_menor(scores)
+        melhor_gen_eval = scores[i_melhor_gen]
+        if melhor_gen_eval > 20:
+            print("banana")
+        # Coloca o valor dele na lista dos melhores de cada geração
+        melhores.append(melhor_gen_eval)
         # Se o melhor indivíduo daquela geração for melhor que o melhor histórico, substituímos o melhor histórico por ele
-        if possivel_melhor_eval < melhor_eval:
-            i_melhor = i_possivel_melhor
-            melhor_eval = possivel_melhor_eval
+        if melhor_gen_eval < melhor_eval:
+            i_melhor = i_melhor_gen
+            melhor_eval = melhor_gen_eval
             if verbose: print(f"> Geração {gen+1}: Novo melhor {decodificado[i_melhor]} = {melhor_eval}")
 
         # Plota nas gerações 1, 25, 50 e 100
@@ -197,27 +201,25 @@ def alg_genetico(funcao, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n
             plot(decodificado)
             plot_landscape(decodificado)
 
-        scores_em_ordem = scores.copy()
-        scores_em_ordem = sorted(scores_em_ordem)
-        # Colocando a média dos 30 melhores na lista de bests
-        bests.append(sum(scores_em_ordem[:30])/30)
+    return pop[i_melhor], melhor_eval, melhores
 
-    return pop[i_melhor], melhor_eval, bests
+def main(): 
+    # Range para input
+    limites = [[-2.048, 2.048], [-2.048, 2.048]]
+    # Total de gerações
+    geracoes = 100
+    # Bits por variável
+    n_bits = 16
+    # Tamanho da população
+    tam_pop = 100
+    # Taxa de crossover
+    tx_cross = 0.8
+    # Taxa de mutação
+    tx_mut = 0.03
+    # Número de filhos por geração
+    n_filhos = 20
+    # Faz a busca do algoritmo genético
+    melhor, score, bests = alg_genetico(rosenbrock, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n_filhos, 3, True, False)
+    print(f"Melhor indivíduo encontrado por mim: {decodifica(limites, n_bits, melhor)} = {score}")
 
-# Range para input
-limites = [[-2.048, 2.048], [-2.048, 2.048]]
-# Total de gerações
-geracoes = 100
-# Bits por variável
-n_bits = 16
-# Tamanho da população
-tam_pop = 100
-# Taxa de crossover
-tx_cross = 0.8
-# Taxa de mutação
-tx_mut = 0.03
-# Número de filhos por geração
-n_filhos = 20
-# Faz a busca do algoritmo genético
-melhor, score, bests = alg_genetico(rosenbrock, limites, n_bits, geracoes, tam_pop, tx_cross, tx_mut, n_filhos, 3, True, False)
-print(f"Melhor indivíduo encontrado por mim: {decodifica(limites, n_bits, melhor)} = {score}")
+main()
