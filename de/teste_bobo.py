@@ -1,0 +1,1 @@
+menor_x, menor_y = 10000
