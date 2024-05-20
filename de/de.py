@@ -281,7 +281,7 @@ def de_best2(fobj, bounds, mut=0.8, crossp=0.7, popsize=20, gens=100):
         pct_melhora = round((cont_melhorou/(cont_melhorou+cont_igual))*100, 2)
         yield best, fitness[best_idx], pct_melhora
 
-def de_currenttobest1(fobj, bounds, mut=0.8, crossp=0.7, popsize=20, gens=100):
+def de_currenttobest1(fobj, bounds, mut=0.8, crossp=0.7, popsize=20, gens=100, plotar=False):
     # Dimensões
     dimensions = len(bounds)
     # População inicial de vetores aleatórios (inicialmente com valores entre 0 e 1)
@@ -291,13 +291,18 @@ def de_currenttobest1(fobj, bounds, mut=0.8, crossp=0.7, popsize=20, gens=100):
     min_b, max_b = np.asarray(bounds).T
     diff = np.fabs(min_b - max_b)
     pop = min_b + pop_0_1 * diff
-    
+
     # Calcula o fitness dos indivíduos
     fitness = np.asarray([fobj(ind) for ind in pop])
     # Pega o índice do indivíduo com menor fitness
     best_idx = np.argmin(fitness)
     # Pega o indivíduo com menor fitness
     best = pop[best_idx]
+    if plotar:
+        limites_graf = min_max(pop)
+        print("Geração 1")
+        plot.plot(pop, limites_graf)
+        plot.plot_landscape(pop, limites_graf)
     for gen in range(gens):
         # Contagem de quantas vezes o valor do novo indivíduo é melhor que o do antigo
         cont_melhorou = 0
@@ -305,12 +310,12 @@ def de_currenttobest1(fobj, bounds, mut=0.8, crossp=0.7, popsize=20, gens=100):
         for j in range(popsize):
             # Pega os números de todos os índices menos o j
             idxs = [idx for idx in range(popsize) if idx != j]
-            # Pega o indivíduo com menor fitness
+            # Pega o indivíduo com menor fitness (versão entre 0 e 1)
             b = min(pop_0_1, key=fobj)
-            # Pega 3 vetores aleatórios que não j da população e executa a mutação
+            # Pega 1 vetor aleatório que não j da população e executa a mutação
             # (mantendo os valores entre 0 e 1 com np.clip)
-            a, c, d = pop_0_1[np.random.choice(idxs, 3, replace = False)]
-            mutant = np.clip(a + mut * (b - a) + mut * (c - d), 0, 1)
+            a = pop_0_1[np.random.choice(idxs, 1, replace = False)][0]
+            mutant = np.clip(a + mut * (b - a), 0, 1)
             # Cria um array com "dimensions" elementos e cada elemento tem chance "crossp" de ser True
             cross_points = np.random.rand(dimensions) < crossp
             # Se todos os elementos em cross_points forem False, bota um aleatório como verdadeiro
@@ -322,21 +327,28 @@ def de_currenttobest1(fobj, bounds, mut=0.8, crossp=0.7, popsize=20, gens=100):
             trial_0_1 = np.where(cross_points, mutant, pop_0_1[j])
             # Normaliza os valores para entre -100 e 100
             trial = min_b + trial_0_1 * diff
-            
+
             # Pega o fitness do novo indivíduo
             f = fobj(trial)
-            # Se a fitness do novo indivíduo for melhor que a do antigo, substitui o antigo pelo novo 
+            # Se a fitness do novo indivíduo for melhor que a do antigo, substitui o antigo pelo novo
             if f < fitness[j]:
                 cont_melhorou += 1
                 fitness[j] = f
                 pop_0_1[j] = trial_0_1
+                pop[j] = trial
                 # Se a fitness do novo indivíduo for melhor que a melhor atual, coloca ela como a nova melhor
                 if f < fitness[best_idx]:
                     best_idx = j
                     best = trial
             else:
                 cont_igual += 1
-        
+
+        # Plota nas gerações 1, 25, 50 e 100
+        if plotar and (gen == 24 or gen == 49 or gen == 99):
+            limites_graf = min_max(pop)
+            print(f"Geração {gen+1}")
+            plot.plot(pop, limites_graf)
+            plot.plot_landscape(pop, limites_graf)
         # Retorna o melhor indivíduo, seu fitness quantas vezes os indivíduos novos foram melhores e piores que
         # os antigos nessa iteração
         pct_melhora = round((cont_melhorou/(cont_melhorou+cont_igual))*100, 2)
@@ -483,6 +495,6 @@ def compara_30():
     print(f"Indivíduos que representam a Mediana: {currenttobest1_melhores_inds_ult_gen_ordenados_por_fitness[14]}, {currenttobest1_melhores_inds_ult_gen_ordenados_por_fitness[15]}")
     print("Como temos 30 execuções (número par), o valor da mediana corresponde à média do fitness dos dois pontos acima")
 
-result = list(de_rand1(fobj, bounds=[(-100, 100)] * 2, plotar=True))
+result = list(de_currenttobest1(fobj, bounds=[(-100, 100)] * 2, plotar=False))
 for i in range(len(result)):
     print(f"{i}. {result[i]}")
