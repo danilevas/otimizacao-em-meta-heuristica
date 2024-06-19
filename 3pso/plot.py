@@ -4,6 +4,8 @@
 # Dashdot
 # None
 
+import matplotlib as plt
+
 plt.figure(figsize=(10, 6))
 plt.plot(list(range(0, 100)), meu_pso_medias, linestyle='solid', label='meu_pso')
 plt.plot(list(range(0, 100)), pymoo_medias, linestyle='dashed', label='pymoo')
