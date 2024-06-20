@@ -89,75 +89,77 @@ def plot_landscape(vetores, limites):
     plt.show()
 
 # Define o algoritmo DEEPSO
-def meu_deepso(funcao, dim=2, limites=[-5.12, 5.12], num_particulas=30, max_iter=100, w=0.5, c1=1, c2=2, plotar=False):
-    # Inicializa partículas e velocidades
-    particulas = np.random.uniform(limites[0], limites[1], (num_particulas, dim))
+def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, dim=2, limites=[-5.12, 5.12], num_particulas=30, max_iter=100, c1=1, c2=2, plotar=False):
+    # Inicializa posições e velocidades das partículas
+    posicoes = np.random.uniform(limites[0], limites[1], (num_particulas, dim))
     velocidades = np.zeros((num_particulas, dim))
 
     # Inicializa as melhores posições e os melhores valores de fitness
-    melhores_posicoes = np.copy(particulas)
-    melhor_fitness = np.array([funcao(p) for p in particulas])
-    swarm_melhor_posicao = melhores_posicoes[np.argmin(melhor_fitness)]
-    swarm_melhor_fitness = np.min(melhor_fitness)
+    valores_fitness = np.array([funcao(p) for p in posicoes])
+    x_bests = np.copy(posicoes)
+    melhores_fitness = np.array([funcao(p) for p in posicoes])
+    x_gb = x_bests[np.argmin(melhores_fitness)]
 
     # Plota a população no plano 3D
     if plotar:
-        limites_graf = min_max(particulas)
+        limites_graf = min_max(posicoes)
         print("Geração 1")
-        plot(particulas, limites_graf)
-        plot_landscape(particulas, limites_graf)
+        plot(posicoes, limites_graf)
+        plot_landscape(posicoes, limites_graf)
 
     # Itera o número especificado de vezes, atualizando a velocidade e posição de cada partícula a cada iteração
-    for i in range(max_iter):
-        # Atualiza as velocidades
-        for p in range(len(particulas)):
-            # Gerar candidato DEEPSO
-            doador = np.copy(particula['posicao'])
-            for j in range(dim):
-                if np.random.rand() < CR:
-                    doador[j] = particula['posicao'][j] + F * (particula['melhor_posicao'][j] - particula['posicao'][j])
+    for iter in range(max_iter):
+        for p in range(len(posicoes)):
+            # Muta as variáveis
+            w_i_mut = w_i + (t_mut * np.random.normal(0, 1))
+            w_m_mut = w_m + (t_mut * np.random.normal(0, 1))
+            w_s_mut = w_s + (t_mut * np.random.normal(0, 1))
+            x_gb_mut = x_gb * (1 + (t_mut * np.random.normal(0, 1)))
 
-            # Avaliar o candidato DEEPSO
-            score_doador = himmelblau(doador)
-            if score_doador < particula['melhor_score']:
-                particula['melhor_score'] = score_doador
-                particula['melhor_posicao'] = np.copy(doador)
+            # Atualiza a matriz de comunicação
+            C = np.zeros((dim, dim))
+            for i in range(dim):
+                for j in range(dim):
+                    if i == j:
+                        ri = np.random.normal(0, 1)
+                        if ri < t_com:
+                            C[i, j] = 1
 
-            # Atualizar velocidade
-            inercia = w * particula['velocidade']
-            cognitivo = c1 * np.random.rand(dim) * (particula['melhor_posicao'] - particula['posicao'])
-            social = c2 * np.random.rand(dim) * (melhor_global_posicao - particula['posicao'])
-            particula['velocidade'] = inercia + cognitivo + social
-
-            # Atualiza as posições
-            particulas += velocidades
-
+            # Atualiza a velocidade
+            parte1 = w_i_mut * velocidades[p]
+            parte2 = w_m_mut * (x_bests[p] - posicoes[p])
+            parte3 = w_s_mut * C * (x_gb_mut - posicoes[p])
+            velocidades[p] = parte1 + parte2 + parte3
+            # Atualiza a posição
+            posicoes[p] += velocidades[p]
+            
             # Se algum índice sair dos limites, ele vai para o limite que ele estourou e sua velocidade passa a ser 0
             for k in range(2):
-                if particulas[j][k] < limites[0]:
-                    particulas[j][k] = limites[0]
+                if posicoes[j][k] < limites[0]:
+                    posicoes[j][k] = limites[0]
                     velocidades[j][k] = 0
-                if particulas[j][k] > limites[1]:
-                    particulas[j][k] = limites[1]
+                if posicoes[j][k] > limites[1]:
+                    posicoes[j][k] = limites[1]
                     velocidades[j][k] = 0
+            
+            # Avalia o fitness da partícula
+            valores_fitness[p] = funcao(posicoes[p])
 
-        # Avalia o fitness de cada partícula
-        valores_fitness = np.array([funcao(p) for p in particulas])
-
-        # Atualiza melhores posições e valores de fitness
-        indices_melhorados = np.where(valores_fitness < melhor_fitness)
-        melhores_posicoes[indices_melhorados] = particulas[indices_melhorados]
-        melhor_fitness[indices_melhorados] = valores_fitness[indices_melhorados]
-        if np.min(valores_fitness) < swarm_melhor_fitness:
-            swarm_melhor_posicao = particulas[np.argmin(valores_fitness)]
-            swarm_melhor_fitness = np.min(valores_fitness)
+            # Atualiza o best e o global best
+            if funcao(posicoes[p]) < funcao(x_bests[p]):
+                x_bests[p] = posicoes[p]
+                melhores_fitness[p] = funcao(posicoes[p])
+            if funcao(posicoes[p]) < funcao(x_gb):
+                x_gb = posicoes[p]
 
         # Plota nas gerações 1, 25, 50 e 100
-        if plotar and (i == 24 or i == 49 or i == 99):yy
-            limites_graf = min_max(particulas)
-            print(f"Geração {i+1}")
-            plot(particulas, limites_graf)
-            plot_landscape(particulas, limites_graf)
+        if plotar and (iter == 24 or iter == 49 or iter == 99):
+            limites_graf = min_max(posicoes)
+            print(f"Geração {iter+1}")
+            plot(posicoes, limites_graf)
+            plot_landscape(posicoes, limites_graf)
 
         # Retorna a melhor solução encontrada pelo algoritmo naquela iteração
-        yield swarm_melhor_posicao, swarm_melhor_fitness
+        yield x_gb, funcao(x_gb)
+
+res_meu_deepso = list(meu_deepso(himmelblau, w_i=0.3, w_m=0.3, w_s=0.4, t_mut=0.8, t_com=0.5))
