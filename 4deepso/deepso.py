@@ -128,7 +128,14 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, dim=2, limites=[-5.12, 5.12]
             # Atualiza a velocidade
             parte1 = w_i_mut * velocidades[p]
             parte2 = w_m_mut * (x_bests[p] - posicoes[p])
-            parte3 = w_s_mut * C * (x_gb_mut - posicoes[p])
+
+            pre1_parte3 = (x_gb_mut - posicoes[p])
+            pre2_parte3 = np.array([[pre1_parte3[0]],[pre1_parte3[1]]])
+
+            pre3_parte3 = C @ pre2_parte3
+            pre4_parte3 = np.array([pre3_parte3[0][0], pre3_parte3[1][0]])
+
+            parte3 = w_s_mut * pre4_parte3
             velocidades[p] = parte1 + parte2 + parte3
             # Atualiza a posição
             posicoes[p] += velocidades[p]
@@ -163,3 +170,4 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, dim=2, limites=[-5.12, 5.12]
         yield x_gb, funcao(x_gb)
 
 res_meu_deepso = list(meu_deepso(himmelblau, w_i=0.3, w_m=0.3, w_s=0.4, t_mut=0.8, t_com=0.5))
+print(res_meu_deepso)
