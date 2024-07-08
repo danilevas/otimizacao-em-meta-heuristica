@@ -132,7 +132,7 @@ def hill_climb(funcao, dim, posicao, fitness, fator_max):
         return posicao, fitness, False
 
 # Define o algoritmo DEEPSO
-def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb, dim=2, limites=[-5, 5], num_particulas=30, max_iter=100, plotar=False):
+def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2, limites=[-5, 5], num_particulas=30, max_iter=100, plotar=False):
     # Inicializa posições e velocidades das partículas
     posicoes = np.random.uniform(limites[0], limites[1], (num_particulas, dim))
     velocidades = np.zeros((num_particulas, dim))
