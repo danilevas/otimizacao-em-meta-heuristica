@@ -238,13 +238,15 @@ def boxplot(data, titulo):
     plt.xticks([1, 2], labels)
     plt.show()
 
-# roda_deepso(rosenbrock_n, w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959,
+# 'w_i': 0.49407190293404785, 'w_m': 0.5110297319183723, 'w_s': 0.8376070505693844, 't_mut': 0.058184368025790606, 't_com': 0.12113239780216252
+# roda(meu_deepso, rosenbrock_n, w_i=0.49407190293404785, w_m=0.5110297319183723,
+#             w_s=0.8376070505693844, t_mut=0.058184368025790606, t_com=0.12113239780216252,
 #             dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
 #             com_hill_climb=False, plotar=False, printa_tudo=True)
 
-# roda(meu_cdeepso, rosenbrock_n, w_i=0.1936384307793284, w_m=0.3640416913945523, w_s=0.4423198778261193, t_mut=0.32984172878949947, t_com=0.5417890328667972,
-#             dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
-#             com_hill_climb=False, plotar=False, printa_tudo=True)
+roda(meu_cdeepso, rosenbrock_n, w_i=0.1936384307793284, w_m=0.3640416913945523, w_s=0.4423198778261193, t_mut=0.32984172878949947, t_com=0.5417890328667972,
+            dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
+            com_hill_climb=False, plotar=False, printa_tudo=True)
 
 # inds_bp1, inds_bp2 = analise_geral(30, teste=True)
 # boxplot([inds_bp1, inds_bp2], "Rosenbrock com 10 dimensões")
@@ -256,9 +258,9 @@ def boxplot(data, titulo):
 # encontra_variaveis(meu_cdeepso, rosenbrock_n, 30, 30, "C-DEEPSO Rosenbrock 30 dimensões")
 # encontra_variaveis(meu_cdeepso, rosenbrock_n, 50, 30, "C-DEEPSO Rosenbrock 50 dimensões")
 
-encontra_variaveis(meu_deepso, rastrigin_n, 10, 30, "DEEPSO Rastrigin 10 dimensões")
-encontra_variaveis(meu_deepso, rastrigin_n, 30, 30, "DEEPSO Rastrigin 30 dimensões")
-encontra_variaveis(meu_deepso, rastrigin_n, 50, 30, "DEEPSO Rastrigin 50 dimensões")
+# encontra_variaveis(meu_deepso, rastrigin_n, 10, 30, "DEEPSO Rastrigin 10 dimensões")
+# encontra_variaveis(meu_deepso, rastrigin_n, 30, 30, "DEEPSO Rastrigin 30 dimensões")
+# encontra_variaveis(meu_deepso, rastrigin_n, 50, 30, "DEEPSO Rastrigin 50 dimensões")
 # encontra_variaveis(meu_cdeepso, rastrigin_n, 10, 30, "C-DEEPSO Rastrigin 10 dimensões")
 # encontra_variaveis(meu_cdeepso, rastrigin_n, 30, 30, "C-DEEPSO Rastrigin 30 dimensões")
 # encontra_variaveis(meu_cdeepso, rastrigin_n, 50, 30, "C-DEEPSO Rastrigin 50 dimensões")

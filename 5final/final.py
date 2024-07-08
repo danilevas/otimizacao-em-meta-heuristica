@@ -140,7 +140,7 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
     # Inicializa as melhores posições e os melhores valores de fitness
     valores_fitness = np.array([funcao(p, dim) for p in posicoes])
     x_bests = np.copy(posicoes)
-    melhores_fitness = np.array([funcao(p, dim) for p in posicoes])
+    melhores_fitness = np.copy(valores_fitness)
     x_gb = np.copy(x_bests[np.argmin(melhores_fitness)])
     x_gb_fitness = funcao(x_gb, dim)
 
@@ -207,13 +207,13 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
             valores_fitness[p] = funcao(posicoes[p], dim)
 
             # Atualiza o best e o global best
-            if funcao(posicoes[p], dim) <= funcao(x_bests[p], dim):
+            if valores_fitness[p] < melhores_fitness[p]:
                 x_bests[p] = np.copy(posicoes[p])
-                melhores_fitness[p] = funcao(posicoes[p], dim)
-            if funcao(posicoes[p], dim) <= x_gb_fitness:
+                melhores_fitness[p] = valores_fitness[p]
+            if valores_fitness[p] < x_gb_fitness:
                 # print(f"Xgb era {pega_inteiro(x_gb)} com fitness {x_gb_fitness} e agora é {pega_inteiro(posicoes[p])} com fitness {funcao(posicoes[p], dim)}")
                 x_gb = np.copy(posicoes[p])
-                x_gb_fitness = funcao(x_gb, dim)
+                x_gb_fitness = valores_fitness[p]
 
         log_hc = ""
         if iter >= 20 and iter < 30 and com_hill_climb == True:
@@ -226,7 +226,7 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
                 x_gb_fitness = fitness_hc
 
         # Plota nas gerações 1, 25, 50 e 100
-        if plotar and (iter == 24 or iter == 49 or iter == 99):
+        if plotar and iter in [24, 49, 99]:
             limites_graf = min_max(posicoes)
             print(f"Geração {iter+1}")
             plot(posicoes, limites_graf, dim, funcao)
@@ -245,7 +245,7 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
     # Inicializa as melhores posições e os melhores valores de fitness
     valores_fitness = np.array([funcao(p, dim) for p in posicoes])
     x_bests = np.copy(posicoes)
-    melhores_fitness = np.array([funcao(p, dim) for p in posicoes])
+    melhores_fitness = np.copy(valores_fitness)
     x_gb = np.copy(x_bests[np.argmin(melhores_fitness)])
     memoria_b.append(np.copy(x_gb))
     x_gb_fitness = funcao(x_gb, dim)
@@ -276,13 +276,13 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
                             C[i, j] = 1
             # Cria o Xst
             # Xst = Xr + F(Xbest − Xr) + F(Xr1 − Xr2)
-            # if len(memoria_b) >= 3:
-            #     x_r = np.copy(random.choice(memoria_b))
-            #     x_r1 = np.copy(random.choice(memoria_b))
-            #     x_r2 = np.copy(random.choice(memoria_b))
             x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b))) / 2
-            x_r1 = np.copy(random.choice(posicoes))
-            x_r2 = np.copy(random.choice(posicoes))
+            if len(memoria_b) >= 3:
+                x_r1 = np.copy(random.choice(memoria_b))
+                x_r2 = np.copy(random.choice(memoria_b))
+            else:
+                x_r1 = np.copy(random.choice(posicoes))
+                x_r2 = np.copy(random.choice(posicoes))
             x_st = np.copy(x_r) + funcao(x_bests[p] - x_r, dim) + funcao(x_r1 - x_r2, dim)
 
             # Atualiza a velocidade
@@ -314,13 +314,13 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
             valores_fitness[p] = funcao(posicoes[p], dim)
 
             # Atualiza o best e o global best
-            if funcao(posicoes[p], dim) <= funcao(x_bests[p], dim):
+            if valores_fitness[p] < melhores_fitness[p]:
                 x_bests[p] = np.copy(posicoes[p])
-                melhores_fitness[p] = funcao(posicoes[p], dim)
-            if funcao(posicoes[p], dim) <= x_gb_fitness:
+                melhores_fitness[p] = valores_fitness[p]
+            if valores_fitness[p] < x_gb_fitness:
                 # print(f"Xgb era {pega_inteiro(x_gb)} com fitness {x_gb_fitness} e agora é {pega_inteiro(posicoes[p])} com fitness {funcao(posicoes[p], dim)}")
                 x_gb = np.copy(posicoes[p])
-                x_gb_fitness = funcao(x_gb, dim)
+                x_gb_fitness = valores_fitness[p]
 
         log_hc = ""
         if iter >= 20 and iter < 30 and com_hill_climb == True:
@@ -333,7 +333,7 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
                 x_gb_fitness = fitness_hc
 
         # Plota nas gerações 1, 25, 50 e 100
-        if plotar and (iter == 24 or iter == 49 or iter == 99):
+        if plotar and iter in [24, 49, 99]:
             limites_graf = min_max(posicoes)
             print(f"Geração {iter+1}")
             plot(posicoes, limites_graf, dim, funcao)
