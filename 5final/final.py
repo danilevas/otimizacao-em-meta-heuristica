@@ -236,7 +236,7 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
         yield x_gb, x_gb_fitness, log_hc
 
 # Define o algoritmo DEEPSO
-def meu_c_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb, dim=2, limites=[-5, 5], num_particulas=30, max_iter=100, plotar=False):
+def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2, limites=[-5, 5], num_particulas=30, max_iter=100, plotar=False):
     # Inicializa posições e velocidades das partículas, e memória B
     posicoes = np.random.uniform(limites[0], limites[1], (num_particulas, dim))
     velocidades = np.zeros((num_particulas, dim))
