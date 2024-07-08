@@ -93,72 +93,85 @@ def analise(exs, algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, dim):
     return medias, melhores_valores_por_gen, melhores_inds_ult_gen_ordenados_por_fitness
 
 def analise_geral(exs):
+    print("RODANDO DEEPSO 10 DIMENSÕES (ROSENBROCK)")
     deepso10_ros_medias, deepso10_ros_melhores_valores_por_gen, deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
 
+    print("RODANDO DEEPSO 30 DIMENSÕES (ROSENBROCK)")
     deepso30_ros_medias, deepso30_ros_melhores_valores_por_gen, deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
     
+    print("RODANDO DEEPSO 50 DIMENSÕES (ROSENBROCK)")
     deepso50_ros_medias, deepso50_ros_melhores_valores_por_gen, deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
     
+    print("RODANDO C-DEEPSO 10 DIMENSÕES (ROSENBROCK)")
     cdeepso10_ros_medias, cdeepso10_ros_melhores_valores_por_gen, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
     
+    print("RODANDO C-DEEPSO 30 DIMENSÕES (ROSENBROCK)")
     cdeepso30_ros_medias, cdeepso30_ros_melhores_valores_por_gen, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
-        
+    
+    print("RODANDO C-DEEPSO 50 DIMENSÕES (ROSENBROCK)")
     cdeepso50_ros_medias, cdeepso50_ros_melhores_valores_por_gen, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
 
+    print("RODANDO DEEPSO 10 DIMENSÕES (RASTRIGIN)")
     deepso10_ras_medias, deepso10_ras_melhores_valores_por_gen, deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
 
+    print("RODANDO DEEPSO 30 DIMENSÕES (RASTRIGIN)")
     deepso30_ras_medias, deepso30_ras_melhores_valores_por_gen, deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
     
+    print("RODANDO DEEPSO 50 DIMENSÕES (RASTRIGIN)")
     deepso50_ras_medias, deepso50_ras_melhores_valores_por_gen, deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
     
+    print("RODANDO C-DEEPSO 10 DIMENSÕES (RASTRIGIN)")
     cdeepso10_ras_medias, cdeepso10_ras_melhores_valores_por_gen, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
     
+    print("RODANDO C-DEEPSO 30 DIMENSÕES (RASTRIGIN)")
     cdeepso30_ras_medias, cdeepso30_ras_melhores_valores_por_gen, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
-        
+    
+    print("RODANDO C-DEEPSO 50 DIMENSÕES (RASTRIGIN)")
     cdeepso50_ras_medias, cdeepso50_ras_melhores_valores_por_gen, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
                                                                                             w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
     
     # Rosenbrock 10 dimensões
     plota_algoritmos(deepso10_ros_medias, cdeepso10_ros_medias, deepso10_ros_melhores_valores_por_gen, cdeepso10_ros_melhores_valores_por_gen, 
-                     deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness)
+                     deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock 10 dimensões")
 
     # Rosenbrock 30 dimensões
     plota_algoritmos(deepso30_ros_medias, cdeepso30_ros_medias, deepso30_ros_melhores_valores_por_gen, cdeepso30_ros_melhores_valores_por_gen, 
-                     deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness)
+                     deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock 30 dimensões")
 
     # Rosenbrock 50 dimensões
     plota_algoritmos(deepso50_ros_medias, cdeepso50_ros_medias, deepso50_ros_melhores_valores_por_gen, cdeepso50_ros_melhores_valores_por_gen, 
-                     deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness)
+                     deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock 50 dimensões")
 
     # Rastrigin 10 dimensões
     plota_algoritmos(deepso10_ras_medias, cdeepso10_ras_medias, deepso10_ras_melhores_valores_por_gen, cdeepso10_ras_melhores_valores_por_gen, 
-                     deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness)
+                     deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin 10 dimensões")
 
     # Rastrigin 30 dimensões
     plota_algoritmos(deepso30_ras_medias, cdeepso30_ras_medias, deepso30_ras_melhores_valores_por_gen, cdeepso30_ras_melhores_valores_por_gen, 
-                     deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness)
+                     deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin 30 dimensões")
 
     # Rastrigin 50 dimensões
     plota_algoritmos(deepso50_ras_medias, cdeepso50_ras_medias, deepso50_ras_melhores_valores_por_gen, cdeepso50_ras_melhores_valores_por_gen, 
-                     deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness)
+                     deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin 50 dimensões")
 
 def plota_algoritmos(medias1, medias2, melhores_valores_por_gen1, melhores_valores_por_gen2, 
-                     melhores_inds_ult_gen_ordenados_por_fitness1, melhores_inds_ult_gen_ordenados_por_fitness2):
+                     melhores_inds_ult_gen_ordenados_por_fitness1, melhores_inds_ult_gen_ordenados_por_fitness2, titulo):
     plt.figure(figsize=(10, 6))
     plt.plot(list(range(0, 100)), medias1, linestyle='solid', label='DEEPSO')
     plt.plot(list(range(0, 100)), medias2, linestyle='dashed', label='C-DEEPSO')
-
+    
+    plt.title(titulo)
     plt.legend()
     plt.xlabel('Geração')
     plt.ylabel('Média')
