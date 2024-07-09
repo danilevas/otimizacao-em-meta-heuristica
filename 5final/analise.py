@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import random
 from final import *
+import time
 
-def roda(algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, dim, limites, num_particulas, max_iter, com_hill_climb, plotar, printa_tudo):
-    res_meu_deepso = list(algoritmo(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb, dim, limites, num_particulas, max_iter, plotar))
+def roda(algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, F, dim, limites, num_particulas, max_iter, com_hill_climb, plotar, printa_tudo, opcao):
+    if funcao == meu_deepso:
+        res_meu_deepso = list(algoritmo(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb, dim, limites, num_particulas, max_iter, plotar))
+    else:
+        res_meu_deepso = list(algoritmo(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb, dim, limites, num_particulas, max_iter, plotar, opcao))
     print(f"Melhor posição: {pega_inteiro(res_meu_deepso[-1][0])}")
     print(f"Melhor valor: {res_meu_deepso[-1][1]}\n")
     if printa_tudo == True:
@@ -35,7 +39,7 @@ def encontra_variaveis(algoritmo, funcao, dim, conjuntos, sufixo):
     print(f"\nMelhor conjunto para {sufixo}: fitness {valores[np.argmin(valores)]}")
     print(f"w_i={variaveis[melhor_iter][0]}, w_m={variaveis[melhor_iter][1]}, w_s={variaveis[melhor_iter][2]}, t_mut={variaveis[melhor_iter][3]}, t_com={variaveis[melhor_iter][4]}\n")
 
-def analise(exs, algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, dim):
+def analise(exs, algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, F, num_particulas, dim):
     # Análise dos algoritmos
     # Executamos todos 30 vezes com 100 gerações
     bounds_rosenbrock = [(-5., 5.)]
@@ -48,7 +52,8 @@ def analise(exs, algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, dim):
         bests = []
 
         # Roda o algoritmo
-        res = list(algoritmo(funcao, w_i, w_m, w_s, t_mut, t_com, dim=dim))
+        if algoritmo == meu_deepso: res = list(algoritmo(funcao, w_i, w_m, w_s, t_mut, t_com, dim=dim, num_particulas=num_particulas))
+        else: res = list(algoritmo(funcao, w_i, w_m, w_s, t_mut, t_com, F, dim=dim, num_particulas=num_particulas))
         print(f"Executou o algoritmo pela {ex+1}ª vez...")
 
         # Coloca o melhor de cada geração do algoritmo em uma lista
@@ -100,75 +105,111 @@ def analise(exs, algoritmo, funcao, w_i, w_m, w_s, t_mut, t_com, dim):
 def analise_geral(exs, teste=False):
     print("RODANDO DEEPSO 10 DIMENSÕES (ROSENBROCK)")
     deepso10_ros_medias, deepso10_ros_melhores_valores_por_gen, deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
-                                                                                            w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
+                                                                                            w_i=0.5076009271957435, w_m=0.4429945932782201, w_s=0.3947439471627401,
+                                                                                            t_mut=0.07267040486682608, t_com=0.19351372963410257, F=0,
+                                                                                            num_particulas=86, dim=10)
     if teste == False:
         print("RODANDO DEEPSO 30 DIMENSÕES (ROSENBROCK)")
         deepso30_ros_medias, deepso30_ros_melhores_valores_por_gen, deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
+                                                                                                w_i=0.12229881979204243, w_m=0.5473388781280298, w_s=0.2738314472884503,
+                                                                                                t_mut=0.5541076250130184, t_com=0.9115779947456945, F=0,
+                                                                                                num_particulas=70,  dim=30)
         
         print("RODANDO DEEPSO 50 DIMENSÕES (ROSENBROCK)")
         deepso50_ros_medias, deepso50_ros_melhores_valores_por_gen, deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
+                                                                                                w_i=0.018961926239525237, w_m=0.32107489666409283, w_s=0.715655791383361,
+                                                                                                t_mut=0.3940003741978141, t_com=0.9543125369726769, F=0,
+                                                                                                num_particulas=71,  dim=50)
     
     print("RODANDO C-DEEPSO 10 DIMENSÕES (ROSENBROCK)")
     cdeepso10_ros_medias, cdeepso10_ros_melhores_valores_por_gen, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
-                                                                                            w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
+                                                                                            w_i=0.6609872678965918, w_m=0.15695173764889203, w_s=0.4003272909999093,
+                                                                                            t_mut=0.0590297803281594, t_com=0.9777566286899031, F=0.38982833318052934,
+                                                                                            num_particulas=62, dim=10)
     if teste == False:
         print("RODANDO C-DEEPSO 30 DIMENSÕES (ROSENBROCK)")
         cdeepso30_ros_medias, cdeepso30_ros_melhores_valores_por_gen, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
+                                                                                                w_i=0.5504801395493848, w_m=0.06211861240212685, w_s=0.546701319446298,
+                                                                                                t_mut=0.012945757925501232, t_com=0.8733576642755421, F=1.1728642301976058,
+                                                                                                num_particulas=78, dim=30)
         
         print("RODANDO C-DEEPSO 50 DIMENSÕES (ROSENBROCK)")
         cdeepso50_ros_medias, cdeepso50_ros_melhores_valores_por_gen, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rosenbrock_n,
-                                                                                            w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
+                                                                                                w_i=0.1114611016801606, w_m=0.40846197374492293, w_s=0.017841098280119816, t_mut=0.4240834243320104,
+                                                                                                t_com=0.8466119923547033, F=0.18055411172913124,
+                                                                                                num_particulas=53, dim=50)
         
         print("RODANDO DEEPSO 10 DIMENSÕES (RASTRIGIN)")
         deepso10_ras_medias, deepso10_ras_melhores_valores_por_gen, deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
+                                                                                                w_i=0.20418811781971788, w_m=0.5431065480893994, w_s=0.4626481233438281,
+                                                                                                t_mut=0.08256039924070052, t_com=0.13938588490530093, F=0,
+                                                                                                num_particulas=63,  dim=10)
 
         print("RODANDO DEEPSO 30 DIMENSÕES (RASTRIGIN)")
         deepso30_ras_medias, deepso30_ras_melhores_valores_por_gen, deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
+                                                                                                w_i=0.05647555136854313, w_m=0.899490073868074, w_s=0.13946690260760802,
+                                                                                                t_mut=0.659605898137305, t_com=0.9461297689025504, F=0,
+                                                                                                num_particulas=70,  dim=30)
         
         print("RODANDO DEEPSO 50 DIMENSÕES (RASTRIGIN)")
         deepso50_ras_medias, deepso50_ras_melhores_valores_por_gen, deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
+                                                                                                w_i=0.2866722221604476, w_m=0.8337307604335625, w_s=0.496486003831572,
+                                                                                                t_mut=0.15270541720007136, t_com=0.8070367765225529, F=0,
+                                                                                                num_particulas=50,  dim=50)
         
         print("RODANDO C-DEEPSO 10 DIMENSÕES (RASTRIGIN)")
         cdeepso10_ras_medias, cdeepso10_ras_melhores_valores_por_gen, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=10)
+                                                                                                w_i=0.23028145839822917, w_m=0.6077386196025945, w_s=0.17419148166313206,
+                                                                                                t_mut=0.18967852523908402, t_com=0.258995583820822, F=0.46920475962813457,
+                                                                                                num_particulas=100, dim=10)
         
         print("RODANDO C-DEEPSO 30 DIMENSÕES (RASTRIGIN)")
         cdeepso30_ras_medias, cdeepso30_ras_melhores_valores_por_gen, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=30)
+                                                                                                w_i=0.16898751256655437, w_m=0.6232780680674803, w_s=0.19111567375932442,
+                                                                                                t_mut=0.12439632152401968, t_com=0.07894166551435769, F=0.15918484291703436,
+                                                                                                num_particulas=85, dim=30)
         
         print("RODANDO C-DEEPSO 50 DIMENSÕES (RASTRIGIN)")
         cdeepso50_ras_medias, cdeepso50_ras_melhores_valores_por_gen, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness = analise(exs, meu_deepso, rastrigin_n,
-                                                                                                w_i=0.53, w_m=0.2, w_s=0.17, t_mut=0.0027, t_com=0.959, dim=50)
+                                                                                                w_i=0.43649082410765777, w_m=0.7094009197294928, w_s=0.5380340743940113,
+                                                                                                t_mut=0.025001264433285795, t_com=0.8153776836024773, F=0.1759557559881973,
+                                                                                                num_particulas=60, dim=50)
         
-        # Rosenbrock 10 dimensões
+        # Rosenbrock com 10 dimensões
         plota_algoritmos(deepso10_ros_medias, cdeepso10_ros_medias, deepso10_ros_melhores_valores_por_gen, cdeepso10_ros_melhores_valores_por_gen, 
-                        deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock 10 dimensões")
+                        deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock com 10 dimensões")
 
-        # Rosenbrock 30 dimensões
+        boxplot([deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness], "Rosenbrock com 10 dimensões")
+
+        # Rosenbrock com 30 dimensões
         plota_algoritmos(deepso30_ros_medias, cdeepso30_ros_medias, deepso30_ros_melhores_valores_por_gen, cdeepso30_ros_melhores_valores_por_gen, 
-                        deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock 30 dimensões")
+                        deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock com 30 dimensões")
 
-        # Rosenbrock 50 dimensões
+        boxplot([deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness], "Rosenbrock com 30 dimensões")
+
+        # Rosenbrock com 50 dimensões
         plota_algoritmos(deepso50_ros_medias, cdeepso50_ros_medias, deepso50_ros_melhores_valores_por_gen, cdeepso50_ros_melhores_valores_por_gen, 
-                        deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock 50 dimensões")
+                        deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, "Rosenbrock com 50 dimensões")
 
-        # Rastrigin 10 dimensões
+        boxplot([deepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ros_melhores_inds_ult_gen_ordenados_por_fitness], "Rosenbrock com 50 dimensões")
+
+        # Rastrigin com 10 dimensões
         plota_algoritmos(deepso10_ras_medias, cdeepso10_ras_medias, deepso10_ras_melhores_valores_por_gen, cdeepso10_ras_melhores_valores_por_gen, 
-                        deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin 10 dimensões")
+                        deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin com 10 dimensões")
 
-        # Rastrigin 30 dimensões
+        boxplot([deepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ras_melhores_inds_ult_gen_ordenados_por_fitness], "Rastrigin com 10 dimensões")
+
+        # Rastrigin com 30 dimensões
         plota_algoritmos(deepso30_ras_medias, cdeepso30_ras_medias, deepso30_ras_melhores_valores_por_gen, cdeepso30_ras_melhores_valores_por_gen, 
-                        deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin 30 dimensões")
+                        deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin com 30 dimensões")
 
-        # Rastrigin 50 dimensões
+        boxplot([deepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ras_melhores_inds_ult_gen_ordenados_por_fitness], "Rastrigin com 30 dimensões")
+
+        # Rastrigin com 50 dimensões
         plota_algoritmos(deepso50_ras_medias, cdeepso50_ras_medias, deepso50_ras_melhores_valores_por_gen, cdeepso50_ras_melhores_valores_por_gen, 
-                        deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin 50 dimensões")
+                        deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, "Rastrigin com 50 dimensões")
+
+        boxplot([deepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso50_ras_melhores_inds_ult_gen_ordenados_por_fitness], "Rastrigin com 50 dimensões")
 
         return [deepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso10_ros_melhores_inds_ult_gen_ordenados_por_fitness,
                 deepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness, cdeepso30_ros_melhores_inds_ult_gen_ordenados_por_fitness,
@@ -191,6 +232,7 @@ def plota_algoritmos(medias1, medias2, melhores_valores_por_gen1, melhores_valor
     plt.ylabel('Média')
     plt.yscale('log')
 
+    plt.savefig(f'5final/graficos/grafico_{titulo}.png')
     plt.show()
 
     print()
@@ -235,32 +277,47 @@ def boxplot(data, titulo):
     plt.title(titulo)
     plt.xlabel('Category')
     plt.ylabel('Values')
+    plt.yscale('log')
     plt.xticks([1, 2], labels)
+    plt.savefig(f'5final/graficos/boxplot_{titulo}.png')
     plt.show()
+
+roda(meu_cdeepso, rosenbrock_n, w_i=0.1936384307793284, w_m=0.3640416913945523, w_s=0.4423198778261193, t_mut=0.32984172878949947, t_com=0.5417890328667972, F=1.8,
+            dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
+            com_hill_climb=False, plotar=False, printa_tudo=True, opcao=1)
+
+roda(meu_cdeepso, rosenbrock_n, w_i=0.1936384307793284, w_m=0.3640416913945523, w_s=0.4423198778261193, t_mut=0.32984172878949947, t_com=0.5417890328667972, F=1.8,
+            dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
+            com_hill_climb=False, plotar=False, printa_tudo=True, opcao=2)
+
+
+# start = time.time()
+# analise_geral(30)
+# print(f"O código levou {time.time()-start} segundos")
 
 # 'w_i': 0.49407190293404785, 'w_m': 0.5110297319183723, 'w_s': 0.8376070505693844, 't_mut': 0.058184368025790606, 't_com': 0.12113239780216252
 # roda(meu_deepso, rosenbrock_n, w_i=0.49407190293404785, w_m=0.5110297319183723,
-#             w_s=0.8376070505693844, t_mut=0.058184368025790606, t_com=0.12113239780216252,
+#             w_s=0.8376070505693844, t_mut=0.058184368025790606, t_com=0.12113239780216252, F=0,
 #             dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
 #             com_hill_climb=False, plotar=False, printa_tudo=True)
 
-roda(meu_cdeepso, rosenbrock_n, w_i=0.1936384307793284, w_m=0.3640416913945523, w_s=0.4423198778261193, t_mut=0.32984172878949947, t_com=0.5417890328667972,
-            dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
-            com_hill_climb=False, plotar=False, printa_tudo=True)
+# roda(meu_cdeepso, rosenbrock_n, w_i=0.1936384307793284, w_m=0.3640416913945523, w_s=0.4423198778261193, t_mut=0.32984172878949947, t_com=0.5417890328667972, F=1.8,
+#             dim=10, limites=[-5, 5], num_particulas=30, max_iter=100,
+#             com_hill_climb=False, plotar=False, printa_tudo=True)
 
 # inds_bp1, inds_bp2 = analise_geral(30, teste=True)
 # boxplot([inds_bp1, inds_bp2], "Rosenbrock com 10 dimensões")
 
-# encontra_variaveis(meu_deepso, rosenbrock_n, 10, 30, "DEEPSO Rosenbrock 10 dimensões")
-# encontra_variaveis(meu_deepso, rosenbrock_n, 30, 30, "DEEPSO Rosenbrock 30 dimensões")
-# encontra_variaveis(meu_deepso, rosenbrock_n, 50, 30, "DEEPSO Rosenbrock 50 dimensões")
-# encontra_variaveis(meu_cdeepso, rosenbrock_n, 10, 30, "C-DEEPSO Rosenbrock 10 dimensões")
-# encontra_variaveis(meu_cdeepso, rosenbrock_n, 30, 30, "C-DEEPSO Rosenbrock 30 dimensões")
-# encontra_variaveis(meu_cdeepso, rosenbrock_n, 50, 30, "C-DEEPSO Rosenbrock 50 dimensões")
+# encontra_variaveis(meu_deepso, rosenbrock_n, 10, 30, "DEEPSO Rosenbrock com 10 dimensões")
+# encontra_variaveis(meu_deepso, rosenbrock_n, 30, 30, "DEEPSO Rosenbrock com 30 dimensões")
+# encontra_variaveis(meu_deepso, rosenbrock_n, 50, 30, "DEEPSO Rosenbrock com 50 dimensões")
+# encontra_variaveis(meu_cdeepso, rosenbrock_n, 10, 30, "C-DEEPSO Rosenbrock com 10 dimensões")
+# encontra_variaveis(meu_cdeepso, rosenbrock_n, 30, 30, "C-DEEPSO Rosenbrock com 30 dimensões")
+# encontra_variaveis(meu_cdeepso, rosenbrock_n, 50, 30, "C-DEEPSO Rosenbrock com 50 dimensões")
 
-# encontra_variaveis(meu_deepso, rastrigin_n, 10, 30, "DEEPSO Rastrigin 10 dimensões")
-# encontra_variaveis(meu_deepso, rastrigin_n, 30, 30, "DEEPSO Rastrigin 30 dimensões")
-# encontra_variaveis(meu_deepso, rastrigin_n, 50, 30, "DEEPSO Rastrigin 50 dimensões")
-# encontra_variaveis(meu_cdeepso, rastrigin_n, 10, 30, "C-DEEPSO Rastrigin 10 dimensões")
-# encontra_variaveis(meu_cdeepso, rastrigin_n, 30, 30, "C-DEEPSO Rastrigin 30 dimensões")
-# encontra_variaveis(meu_cdeepso, rastrigin_n, 50, 30, "C-DEEPSO Rastrigin 50 dimensões")
+# encontra_variaveis(meu_deepso, rastrigin_n, 10, 30, "DEEPSO Rastrigin com 10 dimensões")
+# encontra_variaveis(meu_deepso, rastrigin_n, 30, 30, "DEEPSO Rastrigin com 30 dimensões")
+# encontra_variaveis(meu_deepso, rastrigin_n, 50, 30, "DEEPSO Rastrigin com 50 dimensões")
+# encontra_variaveis(meu_cdeepso, rastrigin_n, 10, 30, "C-DEEPSO Rastrigin com 10 dimensões")
+# encontra_variaveis(meu_cdeepso, rastrigin_n, 30, 30, "C-DEEPSO Rastrigin com 30 dimensões")
+# encontra_variaveis(meu_cdeepso, rastrigin_n, 50, 30, "C-DEEPSO Rastrigin com 50 dimensões")

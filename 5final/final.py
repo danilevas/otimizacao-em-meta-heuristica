@@ -236,18 +236,17 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
         yield x_gb, x_gb_fitness, log_hc
 
 # Define o algoritmo DEEPSO
-def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2, limites=[-5, 5], num_particulas=30, max_iter=100, plotar=False):
+def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=False, dim=2, limites=[-5, 5], num_particulas=30, max_iter=100, plotar=False, opcao=1):
     # Inicializa posições e velocidades das partículas, e memória B
     posicoes = np.random.uniform(limites[0], limites[1], (num_particulas, dim))
     velocidades = np.zeros((num_particulas, dim))
-    memoria_b = []
 
     # Inicializa as melhores posições e os melhores valores de fitness
     valores_fitness = np.array([funcao(p, dim) for p in posicoes])
     x_bests = np.copy(posicoes)
     melhores_fitness = np.copy(valores_fitness)
     x_gb = np.copy(x_bests[np.argmin(melhores_fitness)])
-    memoria_b.append(np.copy(x_gb))
+    memoria_b = transpoe(np.copy(posicoes))
     x_gb_fitness = funcao(x_gb, dim)
 
     # Plota a população no plano 3D
@@ -274,17 +273,36 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
                         ri = meu_normal()
                         if ri < t_com:
                             C[i, j] = 1
-            # Cria o Xst
-            # Xst = Xr + F(Xbest − Xr) + F(Xr1 − Xr2)
-            x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b))) / 2
-            if len(memoria_b) >= 3:
-                x_r1 = np.copy(random.choice(memoria_b))
-                x_r2 = np.copy(random.choice(memoria_b))
-            else:
-                x_r1 = np.copy(random.choice(posicoes))
-                x_r2 = np.copy(random.choice(posicoes))
-            x_st = np.copy(x_r) + funcao(x_bests[p] - x_r, dim) + funcao(x_r1 - x_r2, dim)
+            
+            if opcao == 1:
+                # Cria o Xst
+                # Xst = Xr + F(Xbest − Xr) + F(Xr1 − Xr2)
+                x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b[p]))) / 2
+                if len(memoria_b[p]) >= 3:
+                    x_r1 = np.copy(random.choice(memoria_b[p]))
+                    x_r2 = np.copy(random.choice(memoria_b[p]))
+                else:
+                    x_r1 = np.copy(random.choice(posicoes))
+                    x_r2 = np.copy(random.choice(posicoes))
+                x_st = np.copy(x_r) + F * (x_bests[p] - x_r) + F * (x_r1 - x_r2)
 
+            elif opcao == 2:
+                x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b[p]))) / 2
+                if funcao(x_r) < funcao(posicoes[p]):
+                    x_st = x_bests[p] + F * (x_r - posicoes[p])
+                else:
+                    x_st = x_bests[p] + F * (posicoes[p] - x_r)
+            
+            elif opcao == 3:
+                x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b[p]))) / 2
+                if len(memoria_b[p]) >= 3:
+                    x_r1 = np.copy(random.choice(memoria_b[p]))
+                    x_r2 = np.copy(random.choice(memoria_b[p]))
+                else:
+                    x_r1 = np.copy(random.choice(posicoes))
+                    x_r2 = np.copy(random.choice(posicoes))
+                x_st = np.copy(x_r) + F * (x_bests[p] - x_r + x_r1 - x_r2)
+            
             # Atualiza a velocidade
             parte1 = w_i_mut * velocidades[p]
             parte2 = w_m_mut * (x_st - posicoes[p])
@@ -317,6 +335,7 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
             if valores_fitness[p] < melhores_fitness[p]:
                 x_bests[p] = np.copy(posicoes[p])
                 melhores_fitness[p] = valores_fitness[p]
+                memoria_b[p].append(np.copy(posicoes[p])) # Coloca o novo pbest na memoria b na posição da partícula
             if valores_fitness[p] < x_gb_fitness:
                 # print(f"Xgb era {pega_inteiro(x_gb)} com fitness {x_gb_fitness} e agora é {pega_inteiro(posicoes[p])} com fitness {funcao(posicoes[p], dim)}")
                 x_gb = np.copy(posicoes[p])
@@ -339,6 +358,5 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2
             plot(posicoes, limites_graf, dim, funcao)
             plot_landscape(posicoes, limites_graf, dim, funcao)
 
-        # Coloca a melhor solução encontrada pelo algoritmo naquela iteração na memória B e retorna ela
-        memoria_b.append(np.copy(x_gb))
+        # Retorna a melhor solução encontrada pelo algoritmo naquela iteração
         yield x_gb, x_gb_fitness, log_hc
