@@ -25,7 +25,8 @@ def objective(trial, algoritmo, funcao, dim):
     # max_iter = trial.suggest_int('max_iter', 50, 500)
 
     best_fitness = float('inf')
-    if algoritmo == meu_cdeepso: cdeepso_gen = meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=True, dim=dim, num_particulas=num_particulas, max_iter=100)
+    if algoritmo == meu_cdeepso: cdeepso_gen = meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=True,
+                                                           dim=dim, num_particulas=num_particulas, max_iter=100, opcao=1)
     else: cdeepso_gen = meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=True, dim=dim, num_particulas=num_particulas, max_iter=100)
     
     for x_gb, x_gb_fitness, _ in cdeepso_gen:

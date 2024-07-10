@@ -62,6 +62,13 @@ def transpoe(arr):
             lista[i].append(arr[i])
     return np.array(lista)
 
+def transpoe_grande(arr):
+    lista = []
+    for i in range(len(arr)):
+        lista.append([])
+        lista[i].append(arr[i])
+    return lista
+
 def plot(vetores, limites, dim, funcao):
     fig = plt.figure(figsize=(16, 8))
     ax = fig.add_subplot(111, projection='3d')
@@ -174,21 +181,12 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
             parte2 = w_m_mut * (x_bests[p] - posicoes[p])
 
             pre1_parte3 = (x_gb_mut - posicoes[p])
-            # print(f"pre1_parte3: {pre1_parte3}")
             pre2_parte3 = transpoe(pre1_parte3)
-            # print(f"pre2_parte3: {pre2_parte3}")
 
-            # print(f"C: {C}")
             pre3_parte3 = C @ pre2_parte3
-            # print(f"pre3_parte3: {pre3_parte3}")
             pre4_parte3 = transpoe(pre3_parte3)
-            # print(f"pre4_parte3: {pre4_parte3}")
 
             parte3 = w_s_mut * pre4_parte3
-            # print(f"parte1: {parte1}")
-            # print(f"parte2: {parte2}")
-            # print(f"parte3: {parte3}")
-            # print()
             velocidades[p] = parte1 + parte2 + parte3
 
             # Atualiza a posição
@@ -216,7 +214,7 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
                 x_gb_fitness = valores_fitness[p]
 
         log_hc = ""
-        if iter >= 20 and iter < 30 and com_hill_climb == True:
+        if iter >= 20 and iter < 80 and com_hill_climb == True:
             fator_max = x_gb_fitness
             pos_hc, fitness_hc, funcionou = hill_climb(funcao, dim, x_gb, x_gb_fitness, fator_max)
             log_hc = x_gb_fitness - fitness_hc
@@ -246,7 +244,7 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=False, di
     x_bests = np.copy(posicoes)
     melhores_fitness = np.copy(valores_fitness)
     x_gb = np.copy(x_bests[np.argmin(melhores_fitness)])
-    memoria_b = transpoe(np.copy(posicoes))
+    memoria_b = transpoe_grande(np.copy(posicoes))
     x_gb_fitness = funcao(x_gb, dim)
 
     # Plota a população no plano 3D
@@ -277,7 +275,9 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=False, di
             if opcao == 1:
                 # Cria o Xst
                 # Xst = Xr + F(Xbest − Xr) + F(Xr1 − Xr2)
-                x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b[p]))) / 2
+                pos_random = np.copy(random.choice(posicoes))
+                pos_random_b = np.copy(random.choice(np.array(memoria_b[p])))
+                x_r = (pos_random + pos_random_b) / 2
                 if len(memoria_b[p]) >= 3:
                     x_r1 = np.copy(random.choice(memoria_b[p]))
                     x_r2 = np.copy(random.choice(memoria_b[p]))
@@ -287,8 +287,8 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=False, di
                 x_st = np.copy(x_r) + F * (x_bests[p] - x_r) + F * (x_r1 - x_r2)
 
             elif opcao == 2:
-                x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(memoria_b[p]))) / 2
-                if funcao(x_r) < funcao(posicoes[p]):
+                x_r = (np.copy(random.choice(posicoes)) + np.copy(random.choice(np.array(memoria_b[p])))) / 2
+                if funcao(x_r, dim) < funcao(posicoes[p], dim):
                     x_st = x_bests[p] + F * (x_r - posicoes[p])
                 else:
                     x_st = x_bests[p] + F * (posicoes[p] - x_r)
@@ -342,7 +342,7 @@ def meu_cdeepso(funcao, w_i, w_m, w_s, t_mut, t_com, F, com_hill_climb=False, di
                 x_gb_fitness = valores_fitness[p]
 
         log_hc = ""
-        if iter >= 20 and iter < 30 and com_hill_climb == True:
+        if iter >= 20 and iter < 80 and com_hill_climb == True:
             fator_max = x_gb_fitness
             pos_hc, fitness_hc, funcionou = hill_climb(funcao, dim, x_gb, x_gb_fitness, fator_max)
             log_hc = x_gb_fitness - fitness_hc
