@@ -219,7 +219,6 @@ def meu_deepso(funcao, w_i, w_m, w_s, t_mut, t_com, com_hill_climb=False, dim=2,
             pos_hc, fitness_hc, funcionou = hill_climb(funcao, dim, x_gb, x_gb_fitness, fator_max)
             log_hc = x_gb_fitness - fitness_hc
             if funcionou == True:
-                # print(f"HILLCLIMB! Xgb era {pega_inteiro(x_gb)} com fitness {x_gb_fitness} e agora é {pega_inteiro(pos_hc)} com fitness {fitness_hc}")
                 x_gb = np.copy(pos_hc)
                 x_gb_fitness = fitness_hc
 
